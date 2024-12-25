@@ -1,0 +1,6 @@
+{
+    "user" : {
+        "invalidEmail" : "Invalid email format. Please provide a valid email address.",
+        "invalidPassword" : "Password must be at least 8 characters long."
+    }
+}

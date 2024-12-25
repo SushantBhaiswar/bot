@@ -1,0 +1,5 @@
+{
+    "user": {
+        "invalidEmail": "Invalid email format. Please provide a valid email address."
+    }
+}

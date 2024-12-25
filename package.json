@@ -1,0 +1,21 @@
+{
+  "name": "bot",
+  "version": "1.0.0",
+  "main": "src/bot.js",
+  "scripts": {
+    "bot": "nodemon src/bot.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cross-env": "^7.0.3",
+    "discord.js": "^14.16.3",
+    "dotenv": "^16.4.7",
+    "email-validator": "^2.0.4",
+    "joi": "^17.13.3",
+    "nodemon": "^3.1.9",
+    "winston": "^3.17.0"
+  }
+}
