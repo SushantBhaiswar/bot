@@ -6,7 +6,7 @@ const { sendErrorMessage, sendSuccessMessage } = require('../utility/messageHand
 const utils = require('../utility/helper')
 module.exports = {
     name: 'createuser',
-    description: 'Create a user in the system',
+    description: 'Create a user',
     options: [
         {
             name: 'username',
@@ -28,6 +28,8 @@ module.exports = {
         },
     ],
     async execute(interaction) {
+        console.log(interaction.user)
+
         const username = interaction.options.getString('username');
         const email = interaction.options.getString('email');
         const password = interaction.options.getString('password');
@@ -47,10 +49,8 @@ module.exports = {
 
             const response = await query(route.createUser, 'POST', null, payload)
             if (response.code == 200) {
-                return sendSuccessMessage(interaction , 'Success', response.message)
+                return sendSuccessMessage(interaction, 'Success', response.message)
             }
-
-
 
 
         } catch (error) {

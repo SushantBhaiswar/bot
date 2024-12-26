@@ -38,6 +38,7 @@ const loadAndRegisterCommands = async (client) => {
 
         logger.info('Slash commands registered successfully!');
     } catch (error) {
+        console.log(error)
         logger.error('Failed to register commands:', error);
     }
 }

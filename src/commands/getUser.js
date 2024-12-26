@@ -8,7 +8,6 @@ module.exports = {
         const username = interaction.options.getString('username');
 
         try {
-            // Simulated API call to fetch user data
             const userData = {
                 userID: '12345',
                 username: username,
@@ -19,7 +18,6 @@ module.exports = {
                 ],
             };
 
-            // Format the response string
             const servicesList = userData.services
                 .map(
                     (service, index) =>
