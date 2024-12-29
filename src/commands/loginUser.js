@@ -27,13 +27,11 @@ module.exports = {
 
             }
             const response = await query(route.login, 'POST', null, { email, password });
-            console.log("🚀 ~ execute ~ response:", response)
             if (response.code === 200) {
                 // Store tokens and expiry time
                 const { user, tokens } = response.data;
-                console.log(tokens)
+                console.log("🚀 ~ execute ~ tokens.access.expires:", tokens.access.expires)
                 await storeTokens(interaction.user.id, tokens.access.token, tokens.refresh.token, tokens.access.expires, user._id);
-                console.log('token saved')
                 return sendSuccessMessage(interaction, 'Login Successful', 'You are now logged in!');
             } else {
                 return sendErrorMessage(interaction, 'Login Failed', response.message || 'Invalid email or password.');

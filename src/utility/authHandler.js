@@ -24,7 +24,6 @@ async function initializeTokens() {
 async function getToken(interaction) {
     const userId = interaction?.user?.id
     let tokenData = userTokens.get(userId);
-    console.log("🚀 ~ getToken ~ tokenData:", tokenData)
     if (!tokenData) {
         const mongoToken = await Token.findOne({ userId });
 
@@ -44,17 +43,16 @@ async function getToken(interaction) {
 
     let { accessToken, refreshToken, expiry } = tokenData;
 
-    if (typeof expiry === "string") {
-        expiry = parseInt(expiry, 10); // Convert string to number
-    }
+
 
     // Compare expiry as a timestamp
-    console.log("🚀 ~ getToken ~ Date.now() >= expir:", Date.now(), expiry)
+    console.log("🚀 ~ getToken ~ Date.now() >= expir:", Date.now(), expiry , new Date(expiry).getTime())
     console.log("🚀 ~ getToken ~ Date.now() >= expir:", Date.now() >= new Date(expiry).getTime())
     if (Date.now() >= new Date(expiry).getTime()) {
         try {
             console.log("action token replaced")
             const response = await query(route.refreshToken, 'POST', null, { refreshToken });
+            console.log("🚀 ~ getToken ~ response:", response)
             if (response.code === 200) {
                 const updatedTokenData = {
                     accessToken: response.data.tokens.access.token,
@@ -80,12 +78,14 @@ async function getToken(interaction) {
 }
 
 async function storeTokens(interActionId, accessToken, refreshToken, expiresIn, userId) {
+console.log("🚀 ~ storeTokens ~ expiresIn:", expiresIn)
 
     const tokenData = { accessToken, userId: interActionId, refreshToken, expiry: expiresIn };
 
     userTokens.set(interActionId, tokenData);
 
     try {
+        console.log("🚀 ~ storeTokens ~ userTokens:", userTokens)
 
         await Token.updateOne({ userId: interActionId }, tokenData, { upsert: true, new: true });
     } catch (error) {
