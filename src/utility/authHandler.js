@@ -24,6 +24,7 @@ async function initializeTokens() {
 async function getToken(interaction) {
     const userId = interaction?.user?.id
     let tokenData = userTokens.get(userId);
+    console.log("🚀 ~ getToken ~ tokenData:", tokenData)
     if (!tokenData) {
         const mongoToken = await Token.findOne({ userId });
 
@@ -41,12 +42,19 @@ async function getToken(interaction) {
 
     }
 
-    const { accessToken, refreshToken, expiry } = tokenData;
+    let { accessToken, refreshToken, expiry } = tokenData;
 
-    // Check if the token is expired
-    if (Date.now() >= expiry) {
+    if (typeof expiry === "string") {
+        expiry = parseInt(expiry, 10); // Convert string to number
+    }
+
+    // Compare expiry as a timestamp
+    console.log("🚀 ~ getToken ~ Date.now() >= expir:", Date.now(), expiry)
+    console.log("🚀 ~ getToken ~ Date.now() >= expir:", Date.now() >= new Date(expiry).getTime())
+    if (Date.now() >= new Date(expiry).getTime()) {
         try {
-            const response = await query(route.refreshToken, 'POST', null, { token: refreshToken });
+            console.log("action token replaced")
+            const response = await query(route.refreshToken, 'POST', null, { refreshToken });
             if (response.code === 200) {
                 const updatedTokenData = {
                     accessToken: response.data.tokens.access.token,
@@ -59,11 +67,12 @@ async function getToken(interaction) {
 
                 return updatedTokenData;
             } else {
-                throw new Error('Failed to refresh token');
+                throw new Error(response.message || 'Session Timeout ! Please Login Again');
             }
         } catch (error) {
             console.error('Token refresh failed:', error);
-            throw new Error('Authentication required. Please log in again.');
+            throw new Error('Session Timeout ! Please Login Again');
+
         }
     }
 
@@ -71,13 +80,9 @@ async function getToken(interaction) {
 }
 
 async function storeTokens(interActionId, accessToken, refreshToken, expiresIn, userId) {
-    console.log("🚀 ~ storeTokens ~ expiresIn:", expiresIn)
-    const expiryDate = Date.now() + new Date(expiresIn) * 1000;
-    console.log("🚀 ~ storeTokens ~ expiryDate:", expiryDate)
 
-    const tokenData = { accessToken, userId: interActionId, refreshToken, expiry: expiryDate };
+    const tokenData = { accessToken, userId: interActionId, refreshToken, expiry: expiresIn };
 
-    console.log("🚀 ~ storeTokens ~ tokenData:", tokenData)
     userTokens.set(interActionId, tokenData);
 
     try {

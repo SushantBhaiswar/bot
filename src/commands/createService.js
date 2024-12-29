@@ -1,7 +1,7 @@
 const { query } = require('../server/apicall')
 const route = require('../server/routes')
 const utility = require('../utility/authHandler')
-const { sendSuccessMessage } = require('../utility/messageHandler')
+const { sendSuccessMessage, sendErrorMessage } = require('../utility/messageHandler')
 module.exports = {
     name: 'ppcreateservice',
     description: 'Create a user',
@@ -34,17 +34,18 @@ module.exports = {
         try {
 
             const tokenData = await utility.getToken(interaction)
-            const headers = { Authorization: `Bearer ${tokenData.accessToken}` };
+            console.log("🚀 ~ execute ~ tokenData:", tokenData)
+            const headers = { Authorization: `Bearer ${tokenData?.accessToken}` };
             const response = await query(route.createService, 'POST', headers, payload)
             if (response.code == 200) {
                 return sendSuccessMessage(interaction, 'Success', response.message)
             }
-            await interaction.reply({ content: 'Failed to fetch user data.', ephemeral: true });
 
+            return sendErrorMessage(interaction, 'Error', response.message)
 
         } catch (error) {
             console.error(error);
-            await interaction.reply({ content: 'Failed to fetch user data.', ephemeral: true });
+            return sendErrorMessage(interaction, 'Error', error.message || 'Failed to fetch user data.')
         }
     },
 };

@@ -23,7 +23,7 @@ const tokenSchema = mongoose.Schema(
         },
 
         expiry: {
-            type: String,
+            type: Date,
             required: true
         },
 

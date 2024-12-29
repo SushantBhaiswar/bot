@@ -28,7 +28,6 @@ module.exports = {
         },
     ],
     async execute(interaction) {
-        console.log(interaction.user)
 
         const username = interaction.options.getString('username');
         const email = interaction.options.getString('email');
@@ -51,6 +50,8 @@ module.exports = {
             if (response.code == 200) {
                 return sendSuccessMessage(interaction, 'Success', response.message)
             }
+
+            return sendErrorMessage(interaction, 'Error', response.message);
 
 
         } catch (error) {
