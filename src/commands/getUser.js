@@ -1,3 +1,8 @@
+const { query } = require('../server/apicall')
+const route = require('../server/routes')
+const utility = require('../utility/authHandler')
+const { sendSuccessMessage } = require('../utility/messageHandler')
+
 module.exports = {
     name: 'ppgetuser',
     description: 'Get user data and associated services',
@@ -6,30 +11,31 @@ module.exports = {
     ],
     async execute(interaction) {
         const username = interaction.options.getString('username');
+        const payload = { userName: username }
 
         try {
-            const userData = {
-                userID: '12345',
-                username: username,
-                email: 'example@example.com',
-                services: [
-                    { serviceName: 'YouTube', serviceLink: 'https://youtube.com', monthlyFee: '$3.00' },
-                    { serviceName: 'Netflix', serviceLink: 'https://netflix.com', monthlyFee: '$8.99' },
-                ],
-            };
+            const tokenData = await utility.getToken(interaction)
+            const headers = { Authorization: `Bearer ${tokenData.accessToken}` };
+            const response = await query(route.getUser, 'POST', headers, payload)
+            const { data } = response || {}
+            if (response.code == 200) {
+                const servicesList = data.services
+                    .map(
+                        (service, index) =>
+                            `**${index + 1}. ${service.serviceName}**\nLink: ${service.serviceLink}\nFee: ${service.monthlyFee}\n`
+                    )
+                    .join('\n');
 
-            const servicesList = userData.services
-                .map(
-                    (service, index) =>
-                        `**${index + 1}. ${service.serviceName}**\nLink: ${service.serviceLink}\nFee: ${service.monthlyFee}\n`
-                )
-                .join('\n');
+                const message = `**User Data**\nUsername: ${data.username}\nEmail: ${data.email}\n\n**Services:**\n${servicesList}`;
+                console.log("🚀 ~ execute ~ servicesList:", servicesList)
 
-            const response = `**User Data**\nUsername: ${userData.username}\nEmail: ${userData.email}\n\n**Services:**\n${servicesList}`;
-            await interaction.reply(response);
+                return sendSuccessMessage(interaction, 'Success', message)
+            }
+            return sendErrorMessage(interaction, 'Error', 'Failed to fetch user data.');
+
         } catch (error) {
             console.error(error);
-            await interaction.reply({ content: 'Failed to fetch user data.', ephemeral: true });
+            return sendErrorMessage(interaction, 'Error', error);
         }
     },
 };

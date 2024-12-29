@@ -15,14 +15,12 @@ module.exports = {
         const password = interaction.options.getString('password');
 
         try {
-            console.log('called')
             const response = await query(route.login, 'POST', null, { email, password });
-            console.log(response)
             if (response.code === 200) {
                 // Store tokens and expiry time
                 const { user, tokens } = response.data;
-                console.log(response.data)
-                storeTokens(interaction.user.id, tokens.access.token, tokens.refresh.token, tokens.access.expires ,user._id);
+                console.log(tokens)
+                await storeTokens(interaction.user.id, tokens.access.token, tokens.refresh.token, tokens.access.expires, user._id);
 
                 return sendSuccessMessage(interaction, 'Login Successful', 'You are now logged in!');
             } else {

@@ -27,6 +27,11 @@ module.exports = {
     port: envVars.PORT,
     domain: envVars.BACKEND_DOMAIN,
     version: envVars.VERSION,
+    mongoose: {
+        url: envVars.MONGODB_URL,
+        options: {
+        },
+    },
     discord: {
         token: envVars.DISCORD_TOKEN,
         clientId: envVars.CLIENT_ID,

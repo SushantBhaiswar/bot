@@ -1,9 +1,9 @@
 {
   "name": "bot",
   "version": "1.0.0",
-  "main": "src/bot.js",
+  "main": "src/index.js",
   "scripts": {
-    "bot": "nodemon src/bot.js"
+    "bot": "nodemon src/index.js"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +15,7 @@
     "dotenv": "^16.4.7",
     "email-validator": "^2.0.4",
     "joi": "^17.13.3",
+    "mongoose": "^8.9.2",
     "nodemon": "^3.1.9",
     "winston": "^3.17.0"
   }
